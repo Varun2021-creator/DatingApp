@@ -14,6 +14,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
+
+
 namespace API
 {
     public class Startup
@@ -35,6 +37,16 @@ namespace API
             });
 
             services.AddControllers();
+           services.AddCors((options) =>
+            {
+                options.AddPolicy("angularApplication", (builder) =>
+                {
+                    builder.WithOrigins("http://localhost:4200")
+                    .AllowAnyHeader()
+                    .WithMethods("GET", "POST", "PUT", "DELETE")
+                    .WithExposedHeaders("*");
+                });
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPIv5", Version = "v1" });
@@ -55,6 +67,8 @@ namespace API
 
             app.UseRouting();
 
+           app.UseCors("angularApplication");
+            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
